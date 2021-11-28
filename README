@@ -1,2 +1,5 @@
-This is the repository for Jackie Luke and Rachel Fuller's final project
+This is the repository for Jackie Luke and Rachel Fuller's final project for 
 CSCI1470.
+
+The project will use the Sketchy Database (http://sketchy.eye.gatech.edu/) to identify hand drawn
+sketches of animals using architectures described in Lu and Tran, Stanford 2017.
