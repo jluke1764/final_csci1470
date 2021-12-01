@@ -2,14 +2,13 @@ import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Reshape
 from tensorflow.math import exp, sqrt, square
-from convolution import resnet
+from resnet import ResnetBlock
 
 
 class Model(tf.keras.Model):
 
 
     def __init__(self):
-
         super(Model, self).__init__()
 
         # put params here
@@ -22,14 +21,17 @@ class Model(tf.keras.Model):
 
 
     def call(self, inputs):
+
         """
         Runs a forward pass on an input batch of images.
         inputs: input tensors of batch size x 128x128x1
 
         """
+        print('input shape is ', inputs.shape)
         dropped_out = self.drop_layer(inputs)
         self.initial_conv = tf.keras.layers.Conv2D(64, kernel_size=7, strides=2, padding='SAME') # idk params
         first_conv = self.initial_conv(inputs)
+        print('after 7x7 conv ', first_conv.shape)
 
 
         resnet_1 = ResnetBlock(64,3) # filters, kernel_size, strides (optional, set to 1)
@@ -39,10 +41,12 @@ class Model(tf.keras.Model):
         resnet_3 = ResnetBlock(64,3) # filters, kernel_size
         res3 = resnet_1.call(res2)
         dropped_out_res3 = self.drop_layer(res3)
+        print('after initial res blocks ', dropped_out_res3.shape)
 
 
-        resnet_4 = ResnetBlock(128,3, strides=2) # filters, kernel_size, strides (optional, set to 1)
+        resnet_4 = ResnetBlock(128,3, strides=(2,2)) # filters, kernel_size, strides (optional, set to 1)
         res4 = resnet_4.call(dropped_out_res3)
+
         resnet_5 = ResnetBlock(128,3) # filters, kernel_size
         res5 = resnet_5.call(res4)
         resnet_6 = ResnetBlock(128,3) # filters, kernel_size
@@ -67,12 +71,15 @@ class Model(tf.keras.Model):
 
         # now do average pooling
         pooling_layer = tf.keras.layers.AveragePooling2D(pool_size=(8, 8))
-        dropped_pool = self.dropout(pooling_layer)
+        pooled = pooling_layer(dropped_out_res12)
+        dropped_pool = self.drop_layer(pooled)
 
         dense_layer = tf.keras.layers.Dense(self.num_classes, input_shape=(512,))
+        res = dense_layer(dropped_pool)
+        print('res shape ', res.shape)
 
 
-        return dense_layer
+        return res
 
 
     def loss(self, logits, labels): # this is directly from the cnn assignment
