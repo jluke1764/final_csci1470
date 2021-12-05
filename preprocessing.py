@@ -73,13 +73,17 @@ def get_data(data_path, labels_path):
     new_im = PIL.Image.fromarray(inputs[0])
     new_im.save("cat0.png")
 
-    print(inputs[0])
+    # print(inputs[0])
 
     # one hot labels
     one_hot_labels = tf.one_hot(labels, num_classes)
+    print(one_hot_labels.shape)
 
     #normalize inputs
+    inputs = np.expand_dims(inputs, -1)
     normalized_inputs = inputs/255
+    # print(inputs[0].shape)
+
 
     return (normalized_inputs, one_hot_labels)
 
@@ -94,10 +98,10 @@ def split_into_train_test(inputs, labels, frac=.8):
     indices = np.arange(num_examples)
     np.random.shuffle(indices)
     inputs = tf.gather(inputs, indices)
-    labels = tf.gather(inputs, indices)
+    labels = tf.gather(labels, indices)
 
     inputs_split = np.vsplit(inputs, np.arange(train_num, len(inputs), train_num))
-    labels_split = np.array_split(labels, np.arange(train_num, len(labels), train_num))
+    labels_split = np.vsplit(labels, np.arange(train_num, len(labels), train_num))
     # split_matrix_list = np.vsplit(matrix, np.arange(batch_size, len(matrix), batch_size))
 
 
@@ -107,7 +111,7 @@ def split_into_train_test(inputs, labels, frac=.8):
     test_labels = labels_split[1]
 
     # print(len(train_inputs))
-    # print(len(train_labels))
+    print("114", train_labels.shape)
     # print(len(test_inputs))
     # print(len(test_labels))
 
