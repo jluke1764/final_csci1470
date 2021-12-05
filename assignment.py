@@ -23,24 +23,31 @@ def train(model, train_inputs, train_labels, num_examples): # from my own CNN pr
     '''
     #shuffle
     # print('TRAIN LABELS SIZE', train_labels.shape)
-    indices = np.arange(num_examples)
+    indices = tf.convert_to_tensor(np.arange(num_examples))
     # print(indices.shape)
     indices_shuffled = tf.random.shuffle(indices)
     shuffled_in = tf.gather(train_inputs, indices)
     shuffled_labels = tf.gather(train_labels, indices)
 
-    print('TRAINABLE VARIABLES ', model.trainable_variables)
+    
+
+
     i = 0
     while i <= (num_examples - model.batch_size):
         print("batch number ", i/64)
         input_batch, label_batch = get_batch(i, model.batch_size, shuffled_in, shuffled_labels)
-        # print('LABEL BATCH SIZE ', label_batch.shape)
+        input_batch = tf.convert_to_tensor(input_batch)
+        label_batch = tf.convert_to_tensor(label_batch)
+
         with tf.GradientTape() as tape:
             logits = model.call(input_batch)
             loss = model.loss(logits, label_batch)
             accuracy = model.accuracy(logits, label_batch)
             print('loss ', loss, ' accuracy ', accuracy)
 
+
+        #print('TRAINABLE VARIABLES ', len(model.trainable_variables))
+        #print('TRAINABLE VARIABLES ', [v.name for v in model.trainable_variables])
         gradients = tape.gradient(loss, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
