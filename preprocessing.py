@@ -66,32 +66,10 @@ def get_data(data_path, labels_path):
     inputs = np.array(inputs) # (1248, 128, 128)
     labels = np.array(labels)
 
-    # print(inputs.shape)
-    # print(labels.shape)
-    # print(labels[691])
-    # print(labels[692])
-
-    # for l in range(len(labels)):
-    #     print(l, labels[l])
-
-    # new_im = PIL.Image.fromarray(inputs[691])
-    # new_im.save("img691.png")
-
-    # new_im = PIL.Image.fromarray(inputs[692])
-    # new_im.save("img692.png")
-
-    # print(inputs[0])
 
     # one hot labels
     one_hot_labels = tf.one_hot(labels, num_classes)
     print(one_hot_labels.shape)
-
-    #normalize inputs
-    # normalized_inputs = inputs/255
-    # normalized_inputs = np.expand_dims(inputs, -1) #(1248, 128, 128, 1)
-
-    # print("normal imputs", normalized_inputs.shape)
-
 
     return (inputs, one_hot_labels)
 

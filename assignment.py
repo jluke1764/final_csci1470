@@ -40,7 +40,6 @@ def train(model, train_inputs, train_labels, num_examples): # from my own CNN pr
             loss = model.loss(logits, label_batch)
             accuracy = model.accuracy(logits, label_batch)
             print('loss ', loss, ' accuracy ', accuracy)
-
         gradients = tape.gradient(loss, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
