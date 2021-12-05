@@ -52,17 +52,18 @@ def get_data(data_path, labels_path):
         my_label = my_label.strip()
         unpickled_file = unpickle(os.path.join(data_path, my_label))
         for data in unpickled_file:
+            # print("datashape", data.shape)
             inputs.append(data)
             labels.append(label_ind)
 
         label_ind +=1
 
-    print(len(inputs))
+    # print(len(inputs))
 
     # reshape image data
     # 128*128
 
-    inputs = np.array(inputs) # (1248, 128, 128, 3)
+    inputs = np.array(inputs) # (1248, 128, 128)
     labels = np.array(labels)
 
     # print(inputs.shape)
@@ -70,8 +71,14 @@ def get_data(data_path, labels_path):
     # print(labels[691])
     # print(labels[692])
 
-    new_im = PIL.Image.fromarray(inputs[0])
-    new_im.save("cat0.png")
+    # for l in range(len(labels)):
+    #     print(l, labels[l])
+
+    # new_im = PIL.Image.fromarray(inputs[691])
+    # new_im.save("img691.png")
+
+    # new_im = PIL.Image.fromarray(inputs[692])
+    # new_im.save("img692.png")
 
     # print(inputs[0])
 
@@ -80,12 +87,13 @@ def get_data(data_path, labels_path):
     print(one_hot_labels.shape)
 
     #normalize inputs
-    inputs = np.expand_dims(inputs, -1)
-    normalized_inputs = inputs/255
-    # print(inputs[0].shape)
+    # normalized_inputs = inputs/255
+    # normalized_inputs = np.expand_dims(inputs, -1) #(1248, 128, 128, 1)
+
+    # print("normal imputs", normalized_inputs.shape)
 
 
-    return (normalized_inputs, one_hot_labels)
+    return (inputs, one_hot_labels)
 
 def split_into_train_test(inputs, labels, frac=.8):
 
@@ -102,18 +110,30 @@ def split_into_train_test(inputs, labels, frac=.8):
 
     inputs_split = np.vsplit(inputs, np.arange(train_num, len(inputs), train_num))
     labels_split = np.vsplit(labels, np.arange(train_num, len(labels), train_num))
-    # split_matrix_list = np.vsplit(matrix, np.arange(batch_size, len(matrix), batch_size))
-
 
     train_inputs = inputs_split[0]
     train_labels = labels_split[0]
     test_inputs = inputs_split[1]
     test_labels = labels_split[1]
 
-    # print(len(train_inputs))
-    print("114", train_labels.shape)
-    # print(len(test_inputs))
-    # print(len(test_labels))
+
+    # new_im = PIL.Image.fromarray(train_inputs[0])
+    # new_im.save("test0.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[1])
+    # new_im.save("test1.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[2])
+    # new_im.save("test2.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[3])
+    # new_im.save("test3.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[4])
+    # new_im.save("test4.png")
+
+    train_inputs = np.expand_dims(inputs, -1).astype(float) #(1248, 128, 128, 1)
+    test_inputs = np.expand_dims(inputs, -1).astype(float) #(1248, 128, 128, 1)
 
 
 
