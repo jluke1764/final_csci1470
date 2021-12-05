@@ -36,7 +36,7 @@ class ResnetBlock(tf.keras.Model):
         # now we need to add the original back to this, but also gotta do a 1x1 convolution on it
         one_convolution = self.residual_conv(original)
         # should I do batch normalization here?
-        print('main conv ', relu_batch1.shape, ' input conv ', one_convolution.shape)
+        #print('main conv ', relu_batch1.shape, ' input conv ', one_convolution.shape)
         #combined = tf.keras.layers.Add()([relu_batch2, one_convolution])
         #combined = tf.keras.layers.Add()([relu_batch2, one_convolution])
         combined = tf.keras.layers.Add()([relu_batch1, one_convolution])
