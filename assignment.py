@@ -29,7 +29,7 @@ def train(model, train_inputs, train_labels, num_examples): # from my own CNN pr
     shuffled_in = tf.gather(train_inputs, indices)
     shuffled_labels = tf.gather(train_labels, indices)
 
-
+    print('TRAINABLE VARIABLES ', model.trainable_variables)
     i = 0
     while i <= (num_examples - model.batch_size):
         print("batch number ", i/64)
