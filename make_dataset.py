@@ -13,7 +13,7 @@ def get_labels(sketches_filepath, data_filepath, make_txt=False):
     labels = os.listdir(sketches_filepath)
     if (make_txt == True):
         file_name = "all_labels.txt"
-        path = os.path.join(data_filepath, file_name) 
+        path = os.path.join(data_filepath, file_name)
 
         f = open(path, "w+")
         print(labels)
@@ -26,7 +26,7 @@ def get_labels(sketches_filepath, data_filepath, make_txt=False):
 
 def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
 
-    if (label in labels_list == False): 
+    if (label in labels_list == False):
         print("bad label")
         return
 
@@ -40,13 +40,13 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
 
     # print(os.getcwd())
 
-    f = open("/Users/JackieLuke/cs1470/final_csci1470/data/"+label, "wb")
-    
+    f = open(data_filepath+label, "wb")
+
     data = []
     # print(len(images))
     for image in images:
         # file_name = image
-        img_path = os.path.join(sketches_filepath, label, image) 
+        img_path = os.path.join(sketches_filepath, label, image)
 
         # resize image to 128x128
         img = PIL.Image.open(img_path)
@@ -55,7 +55,7 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
 
 
         # print(img.size)
-        
+
         # print(len(img))
 
         img_bytes = img.tobytes()
@@ -66,22 +66,22 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
 
 
         #do i pickle img bytes or image?
-    
+
     # print(len(data))
     pickle.dump(data, f)
-    
+
     f.close()
 
 def make_select_pickles(sketches_filepath, my_labels_filename):
 
-    my_labels_filepath = os.path.join(".", my_labels_filename) 
+    my_labels_filepath = os.path.join(".", my_labels_filename)
 
 
-    data_filepath = "./data"
+    data_filepath = "./data/"
     if (os.path.exists(data_filepath) == False):
         data_dir = os.mkdir(data_filepath)
 
-    labels_list = get_labels("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "./")
+    labels_list = get_labels(sketches_filepath, "./")
 
     with open(my_labels_filepath, "r") as f:
         my_labels = f.readlines()
@@ -103,4 +103,4 @@ def make_select_pickles(sketches_filepath, my_labels_filename):
 
 # imgs2bytes("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "cow", "/Users/JackieLuke/cs1470/final_csci1470/data", labels_list)
 
-make_select_pickles("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "my_2_labels.txt")
+make_select_pickles("/Users/rachelfuller/Desktop/rendered_256x256/256x256/sketch/tx_000100000000", "my_10_labels.txt")

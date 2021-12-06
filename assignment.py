@@ -29,7 +29,7 @@ def train(model, train_inputs, train_labels, num_examples): # from my own CNN pr
     shuffled_in = tf.gather(train_inputs, indices)
     shuffled_labels = tf.gather(train_labels, indices)
 
-    
+
 
 
     i = 0
@@ -71,7 +71,7 @@ def test(model, test_inputs, test_labels): # will need to do this for 15 epochs,
 def main():
     print('Click clack moo')
 
-    (inputs, labels) = get_data("./data", "./my_2_labels.txt")
+    (inputs, labels) = get_data("./data", "./my_10_labels.txt")
     (train_inputs, train_labels, test_inputs, test_labels) = split_into_train_test(inputs, labels)
     print("TRAIN LABELS SHAPE: ", train_labels.shape)
 
@@ -80,7 +80,8 @@ def main():
     # logits = my_model.call(test_tensor)
     for i in range(15):
         print("epoch ", i)
-        train(my_model, train_inputs, train_labels, 998)
+        print('num examples ', train_labels.shape[0])
+        train(my_model, train_inputs, train_labels, train_labels.shape[0])
 
     return
 

@@ -1,0 +1,10 @@
+cat
+rhinoceros
+ant
+butterfly
+raccoon
+crab
+pig
+hermit_crab
+snail
+duck

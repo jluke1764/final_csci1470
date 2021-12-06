@@ -14,9 +14,9 @@ class Model(tf.keras.Model):
         # put params here
         self.dropout_rate = 0.3 # this is what we did in cnn
         self.drop_layer = tf.keras.layers.Dropout(self.dropout_rate)
-        self.num_classes = 2 # start with this i guess
+        self.num_classes = 10 # start with this i guess
 
-        self.learning_rate = 0.001 # from paper
+        self.learning_rate = 0.01 # from paper 0.001
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate)
         self.batch_size= 64
 
@@ -198,11 +198,11 @@ class Model(tf.keras.Model):
         print('second 16x16x256 ', resH.shape)
 
         #THIRD 32x32x128
-        conv1I = self.conv1H(resH)
-        batch1I = self.batch1H(conv1I)
+        conv1I = self.conv1I(resH)
+        batch1I = self.batch1I(conv1I)
         relu1I = tf.keras.layers.Activation('relu')(batch1I)
-        conv2I = self.conv2H(relu1I)
-        batch2I = self.batch2H(conv2I)
+        conv2I = self.conv2I(relu1I)
+        batch2I = self.batch2I(conv2I)
         resI = tf.keras.layers.Add()([resH, batch2I])
         resI = tf.keras.layers.Activation('relu')(resI)
         print('last 16x16x256 ', resI.shape)
@@ -214,7 +214,7 @@ class Model(tf.keras.Model):
         pooled = self.drop_layer(pooled)
 
         res = self.dense_layer(pooled)
-        res = tf.reshape(res, [-1,2])
+        res = tf.reshape(res, [-1,10])
 
         print(res.shape)
 
@@ -234,7 +234,7 @@ class Model(tf.keras.Model):
         """
         loss = tf.nn.softmax_cross_entropy_with_logits(labels, logits)
         sum = tf.math.reduce_sum(loss)
-        mean_loss = tf.math.reduce_mean(sum) / self.batch_size
+        mean_loss = tf.math.reduce_mean(sum)
 
         return mean_loss
 
