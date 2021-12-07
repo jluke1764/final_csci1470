@@ -32,7 +32,7 @@ def unpickle(file):
 		dict = pickle.load(fo, encoding='bytes')
 	return dict
 
-def get_data(data_path, labels_path):
+def get_data(data_path, labels_path, flip=False):
 
     # get my labels
     with open(labels_path, "r") as f:
@@ -56,6 +56,12 @@ def get_data(data_path, labels_path):
             inputs.append(data)
             labels.append(label_ind)
 
+            if (flip == True):   
+                inputs.append(np.fliplr(data))
+                labels.append(label_ind)
+
+
+
         label_ind +=1
 
     # print(len(inputs))
@@ -71,7 +77,7 @@ def get_data(data_path, labels_path):
     one_hot_labels = tf.one_hot(labels, num_classes)
     print(one_hot_labels.shape)
 
-    return (inputs, one_hot_labels)
+    return (inputs, one_hot_labels, my_labels)
 
 def split_into_train_test(inputs, labels, frac=.8):
 
@@ -93,10 +99,13 @@ def split_into_train_test(inputs, labels, frac=.8):
     train_labels = labels_split[0]
     test_inputs = inputs_split[1]
     test_labels = labels_split[1]
+    print("test input shape", test_inputs.shape)
+
+    print("test labels shape", test_labels.shape)
 
 
     new_im = PIL.Image.fromarray(train_inputs[0])
-    print(train_inputs[0])
+    # print(train_inputs[0])
     new_im.save("test0.png")
 
     # new_im = PIL.Image.fromarray(train_inputs[1])
@@ -111,9 +120,8 @@ def split_into_train_test(inputs, labels, frac=.8):
     # new_im = PIL.Image.fromarray(train_inputs[4])
     # new_im.save("test4.png")
 
-    train_inputs = np.expand_dims(inputs, -1).astype(float) #(1248, 128, 128, 1)
-    test_inputs = np.expand_dims(inputs, -1).astype(float) #(1248, 128, 128, 1)
-
+    train_inputs = np.expand_dims(train_inputs, -1).astype(float) #(1248, 128, 128, 1)
+    test_inputs = np.expand_dims(test_inputs, -1).astype(float) #(1248, 128, 128, 1)
 
 
     return (train_inputs, train_labels, test_inputs, test_labels)
@@ -121,8 +129,8 @@ def split_into_train_test(inputs, labels, frac=.8):
 
 
 
-(inputs, labels) = get_data("./data", "./my_2_labels.txt")
-split_into_train_test(inputs, labels)
+# (inputs, labels, text_label_list) = get_data("./data", "./my_2_labels.txt")
+# split_into_train_test(inputs, labels)
 
 
 

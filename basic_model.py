@@ -4,7 +4,7 @@ from tensorflow.keras.layers import Dense, Flatten, Reshape, Conv2D, MaxPool2D, 
 
 
 class BasicModel(tf.keras.Model):
-    def __init__(self):
+    def __init__(self, num_classes):
         """
         This model class will contain the architecture for your CNN that 
         classifies images. We have left in variables in the constructor
@@ -12,9 +12,9 @@ class BasicModel(tf.keras.Model):
         """
         super(BasicModel, self).__init__()
 
-        self.batch_size = 100
+        self.batch_size = 64
         self.num_inputs = self.batch_size
-        self.num_classes = 2
+        self.num_classes = num_classes #depends on input
         self.loss_list = [] # Append losses to this list in training so you can visualize loss vs time in main
 
         # Initialize all hyperparameters
@@ -23,17 +23,19 @@ class BasicModel(tf.keras.Model):
 
         #convolution layers
         self.convLayers = Sequential()
-        self.convLayers.add(Conv2D(filters= 2, kernel_size=32, strides= [7,7], padding='same', activation='relu'))
+        self.convLayers.add(Conv2D(filters= 16, kernel_size=5, strides= [1,1], padding='same', activation='relu'))
         self.convLayers.add(MaxPool2D(pool_size=(2, 2), strides=2, padding='same'))
         self.convLayers.add(BatchNormalization(epsilon=.00005))
 
-        self.convLayers.add(Conv2D(filters= 2, kernel_size= 64, strides= [5,5], padding='same', activation='relu'))
+        self.convLayers.add(Conv2D(filters= 20, kernel_size= 5, strides= [1,1], padding='same', activation='relu'))
         self.convLayers.add(MaxPool2D(pool_size=(2, 2), strides=2, padding='same'))
         self.convLayers.add(BatchNormalization(epsilon=.00005))
 
-        self.convLayers.add(Conv2D(filters= 2, kernel_size= 64, strides= [3,3], padding='same', activation='relu'))
+        self.convLayers.add(Conv2D(filters= 20, kernel_size= 3, strides= [1,1], padding='same', activation='relu'))
         self.convLayers.add(MaxPool2D(pool_size=(2, 2), strides=2, padding='same'))
         self.convLayers.add(BatchNormalization(epsilon=.00005))
+        self.convLayers.add(Flatten())
+
 
         #dense layer
         self.denseLayers = Sequential()
@@ -44,7 +46,7 @@ class BasicModel(tf.keras.Model):
 
 
 
-    def call(self, inputs, is_testing=False):
+    def call(self, inputs):
         """
         Runs a forward pass on an input batch of images.
         
@@ -53,11 +55,13 @@ class BasicModel(tf.keras.Model):
         :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
         """
         conv_output = self.convLayers(inputs)
+
+        # print("conv output shape", conv_output.shape)
         logits = self.denseLayers(conv_output)
 
 
 
-        return tf.reshape(logits, (self.batch_size, self.num_classes))
+        return logits
 
 
     def loss(self, logits, labels):
@@ -70,6 +74,10 @@ class BasicModel(tf.keras.Model):
         :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
         :return: the loss of the model as a Tensor
         """
+
+        # print("logits shape", logits.shape)
+        # print("labels shape", labels.shape)
+
         loss_tensor = tf.nn.softmax_cross_entropy_with_logits(labels, logits, axis=-1, name=None)
         mean_loss = tf.reduce_mean(loss_tensor)
         return mean_loss
@@ -87,8 +95,5 @@ class BasicModel(tf.keras.Model):
         
         :return: the accuracy of the model as a Tensor
         """
-
-        print("logit shapes", logits.shape)
-        print("label shapes", labels.shape)
         correct_predictions = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
         return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
