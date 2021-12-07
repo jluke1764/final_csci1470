@@ -30,22 +30,14 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
         print("bad label")
         return
 
-    # path = os.path.join(data_filepath, label)
-    # if (os.path.exists(path) == False):
-    #     data_dir = os.mkdir(path)
-
     images = os.listdir(sketches_filepath+"/"+label)
 
     img_bytes_list = []
 
-    # print(os.getcwd())
-
     f = open("/Users/JackieLuke/cs1470/final_csci1470/data/"+label, "wb")
     
     data = []
-    # print(len(images))
     for image in images:
-        # file_name = image
         img_path = os.path.join(sketches_filepath, label, image) 
 
         # resize image to 128x128
@@ -53,21 +45,9 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
         img = img.resize((128, 128))
         img = img.convert('1') # convert image to black and white
 
-
-        # print(img.size)
-        
-        # print(len(img))
-
-        img_bytes = img.tobytes()
-
-        # print(len(img_bytes))
-
-        data.append(np.array(img))
-
-
-        #do i pickle img bytes or image?
+        img_data = np.array(img)
+        data.append(img_data)
     
-    # print(len(data))
     pickle.dump(data, f)
     
     f.close()
@@ -89,7 +69,6 @@ def make_select_pickles(sketches_filepath, my_labels_filename):
         f.close()
 
     for label in my_labels:
-        # f = open(label, "wb")
         print(label)
         label = label.strip()
         imgs2bytes(sketches_filepath, label, data_filepath, labels_list)
@@ -103,4 +82,4 @@ def make_select_pickles(sketches_filepath, my_labels_filename):
 
 # imgs2bytes("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "cow", "/Users/JackieLuke/cs1470/final_csci1470/data", labels_list)
 
-make_select_pickles("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "my_2_labels.txt")
+# make_select_pickles("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "my_2_labels.txt")
