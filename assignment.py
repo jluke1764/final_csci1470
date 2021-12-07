@@ -7,8 +7,11 @@ import numpy as np
 from tensorflow.keras.layers import Dense, Flatten, Reshape
 from tensorflow.math import exp, sqrt, square
 from model import Model
+from basic_model import BasicModel
 from preprocessing import get_data
 from preprocessing import split_into_train_test
+import sys
+import PIL
 
 def get_batch(start_index, batch_size, train_inputs, train_labels):
     input_batch = train_inputs[start_index : (start_index + batch_size)]
@@ -63,14 +66,44 @@ def test(model, test_inputs, test_labels): # will need to do this for 15 epochs,
 def main():
     print('Click clack moo')
 
+    if len(sys.argv) != 2 or sys.argv[1] not in {"BASIC", "RESNET"}:
+        print("USAGE: python assignment.py <Model Type>")
+        print("<Model Type>: [BASIC/RESNET]")
+        exit()
+
     (inputs, labels) = get_data("./data", "./my_2_labels.txt")
     (train_inputs, train_labels, test_inputs, test_labels) = split_into_train_test(inputs, labels)
-    print("TRAIN LABELS SHAPE: ", train_labels.shape)
+    # print("TRAIN LABELS SHAPE: ", train_labels.shape)
 
-    my_model = Model()
+    print("MAKING AN IMAGE")
+    print(train_inputs[0].shape)
+    img = np.squeeze(train_inputs[0], -1).astype(bool)
+    print(img.shape)
+    print(img)
+    new_im = PIL.Image.fromarray(img)
+    # new_im.convert('RGB')
+    new_im.save("test01.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[1])
+    # new_im.save("test1.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[2])
+    # new_im.save("test2.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[3])
+    # new_im.save("test3.png")
+
+    # new_im = PIL.Image.fromarray(train_inputs[4])
+    # new_im.save("test4.png")
+
+    if (sys.argv[1] == "BASIC"):
+        my_model = BasicModel()
+    elif (sys.argv[1] == "RESNET"):
+        my_model = Model()
     # test_tensor = tf.zeros((10, 128, 128, 1))
     # logits = my_model.call(test_tensor)
-    for i in range(15):
+
+    for i in range(50):
         print("epoch ", i)
         train(my_model, train_inputs, train_labels, 998)
 

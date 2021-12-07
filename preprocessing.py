@@ -95,8 +95,9 @@ def split_into_train_test(inputs, labels, frac=.8):
     test_labels = labels_split[1]
 
 
-    # new_im = PIL.Image.fromarray(train_inputs[0])
-    # new_im.save("test0.png")
+    new_im = PIL.Image.fromarray(train_inputs[0])
+    print(train_inputs[0])
+    new_im.save("test0.png")
 
     # new_im = PIL.Image.fromarray(train_inputs[1])
     # new_im.save("test1.png")
