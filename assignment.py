@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras.layers import Dense, Flatten, Reshape
 from tensorflow.math import exp, sqrt, square
-from model import Model
+from model import ResnetModel
 from basic_model import BasicModel
 from preprocessing import get_data
 from preprocessing import split_into_train_test
@@ -71,6 +71,41 @@ def test(model, test_inputs, test_labels): # will need to do this for 15 epochs,
     accuracy = model.accuracy(logits, test_labels)
     return accuracy
 
+def top_n_accuracy(logits, labels, top_n): # will need to do this for 15 epochs, according to paper
+    """
+    Tests the model on the test inputs and labels.
+    """
+    # should we batch these? didn't in cnn but sometimes do, idk why
+
+    # print("test input shape", test_inputs.shape)
+    # print("test labels shape", test_labels.shape)
+
+    logits = np.array(logits)
+
+    if (logits.size < top_n):
+        top_n = logits.size
+
+    num_correct = 0
+    
+    correct_label = tf.argmax(labels)
+    logits = np.array(logits)
+
+    if (logits.size < top_n):
+        top_n = logits.size
+
+    for i in range(top_n):
+        prediction = tf.argmax(logits)
+        if (prediction == correct_label):
+            num_correct += 1
+            break
+            
+        logits[int(prediction)] = -np.inf
+            
+
+    return tf.reduce_mean(tf.cast(num_correct, tf.float32))
+
+
+
 def visualize_loss(losses): 
     """
     Uses Matplotlib to visualize the losses of our model.
@@ -94,24 +129,38 @@ def show_predictions(model, image, logits, label, text_label_list, filename):
     img = PIL.Image.fromarray(image)
     # draw = PIL.ImageDraw.draw(img)
 
+    # print(logits)
+
     logits = np.array(logits)
-    first_pred = int(tf.argmax(logits))
-    # print(first_pred)
-    logits[first_pred] = 0
-    second_pred = int(tf.argmax(logits))
-    logits[second_pred] = 0
-    third_pred = int(tf.argmax(logits))
+
+    num_predictions = 3
+    if (logits.size < num_predictions):
+        num_predictions = logits.size
+    preds = []
+    caption = text_label_list[int(tf.argmax(label))] + ": " 
+
+    for i in range(num_predictions):
+        preds.append(int(tf.argmax(logits)))
+        logits[preds[i]] = -np.inf
+        caption += text_label_list[preds[i]] + " " 
 
 
 
+    # first_pred = int(tf.argmax(logits))
+    # # print(first_pred)
+    # logits[first_pred] = -np.inf
+    # second_pred = int(tf.argmax(logits))
+    # logits[second_pred] = -np.inf
+    # third_pred = int(tf.argmax(logits))
 
-    caption = text_label_list[int(tf.argmax(label))] + ": " + text_label_list[first_pred] + ", " + text_label_list[second_pred] + ", " +  text_label_list[third_pred] 
     # draw.text((new_width / 15 + 25, new_height - 100),
     #                        caption, (255, 0, 0), 
     #                        align ="center")
 
     img.save(filename)
     print(caption)
+    print("TOP 3 ACC:", top_n_accuracy(logits, label, 3))
+
 
 def visualize_imgs(model, inputs, labels, text_label_list, num_images):
     logits = model.call(inputs)
@@ -121,7 +170,7 @@ def visualize_imgs(model, inputs, labels, text_label_list, num_images):
 
 
 
-def main():
+def main(my_labels_txt, num_epochs):
     print('Click clack moo')
 
     start = time.time()
@@ -133,7 +182,7 @@ def main():
         print("<Model Type>: [BASIC/RESNET]")
         exit()
 
-    (inputs, labels, text_label_list) = get_data("./data", "./my_labels.txt", flip=False)
+    (inputs, labels, text_label_list) = get_data("./data", my_labels_txt, flip=False)
     (train_inputs, train_labels, test_inputs, test_labels) = split_into_train_test(inputs, labels)
     # print("TRAIN LABELS SHAPE: ", train_labels.shape)
 
@@ -152,7 +201,7 @@ def main():
     if (sys.argv[1] == "BASIC"):
         my_model = BasicModel(num_classes)
     elif (sys.argv[1] == "RESNET"):
-        my_model = Model(num)
+        my_model = ResnetModel(num_classes)
     # test_tensor = tf.zeros((10, 128, 128, 1))
     # logits = my_model.call(test_tensor)
 
@@ -160,7 +209,6 @@ def main():
 
 
     # train
-    num_epochs = 15
     loss_list_all = []
     for i in range(num_epochs):
         print("epoch ", i)
@@ -179,4 +227,8 @@ def main():
     return
 
 if __name__ == '__main__':
-    main()
+
+    num_epochs = 15
+    filepath = "./my_25_labels.txt"
+
+    main(filepath, num_epochs)

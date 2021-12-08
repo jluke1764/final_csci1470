@@ -5,16 +5,16 @@ from tensorflow.keras.layers import *
 #from resnet import ResnetBlock
 
 
-class Model(tf.keras.Model):
+class ResnetModel(tf.keras.Model):
 
 
-    def __init__(self):
-        super(Model, self).__init__()
+    def __init__(self, num_classes):
+        super(ResnetModel, self).__init__()
 
         # put params here
         self.dropout_rate = 0.3 # this is what we did in cnn
         self.drop_layer = tf.keras.layers.Dropout(self.dropout_rate)
-        self.num_classes = 10 # start with this i guess
+        self.num_classes = num_classes # start with this i guess
 
         self.learning_rate = 0.01 # from paper 0.001
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate)
@@ -213,8 +213,13 @@ class Model(tf.keras.Model):
         pooled = self.pooling_layer_final(resI)
         pooled = self.drop_layer(pooled)
 
-        res = self.dense_layer(pooled)
-        res = tf.reshape(res, [-1,10])
+        print(pooled.shape)
+
+        # flatten before dense
+        output = tf.keras.layers.Flatten()(pooled)
+
+        res = self.dense_layer(output)
+        # res = tf.reshape(res, [-1,10])
 
         print(res.shape)
 
