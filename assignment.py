@@ -69,40 +69,32 @@ def test(model, test_inputs, test_labels): # will need to do this for 15 epochs,
 
     logits = model.call(test_inputs)
     accuracy = model.accuracy(logits, test_labels)
+    print("TOP 3 ACC:", top_n_accuracy(logits, test_labels, 3))
+
     return accuracy
 
 def top_n_accuracy(logits, labels, top_n): # will need to do this for 15 epochs, according to paper
     """
     Tests the model on the test inputs and labels.
     """
-    # should we batch these? didn't in cnn but sometimes do, idk why
+    if (logits.shape[1] < top_n):
+        top_n = logits.shape[1]
 
-    # print("test input shape", test_inputs.shape)
-    # print("test labels shape", test_labels.shape)
+    total_correct = 0
 
-    logits = np.array(logits)
+    for l in range(logits.shape[0]):
+        img_logits = np.array(logits[l])
+        img_label = labels[l]
+        preds = []
+        for i in range(top_n):
+            preds.append(int(tf.argmax(img_logits)))
+            img_logits[preds[i]] = -np.inf
 
-    if (logits.size < top_n):
-        top_n = logits.size
+        if tf.argmax(img_label) in preds:
+            total_correct += 1
 
-    num_correct = 0
-    
-    correct_label = tf.argmax(labels)
-    logits = np.array(logits)
+    return total_correct/logits.shape[0]
 
-    if (logits.size < top_n):
-        top_n = logits.size
-
-    for i in range(top_n):
-        prediction = tf.argmax(logits)
-        if (prediction == correct_label):
-            num_correct += 1
-            break
-            
-        logits[int(prediction)] = -np.inf
-            
-
-    return tf.reduce_mean(tf.cast(num_correct, tf.float32))
 
 
 
@@ -129,7 +121,7 @@ def show_predictions(model, image, logits, label, text_label_list, filename):
     img = PIL.Image.fromarray(image)
     # draw = PIL.ImageDraw.draw(img)
 
-    # print(logits)
+    print(logits)
 
     logits = np.array(logits)
 
@@ -159,8 +151,6 @@ def show_predictions(model, image, logits, label, text_label_list, filename):
 
     img.save(filename)
     print(caption)
-    print("TOP 3 ACC:", top_n_accuracy(logits, label, 3))
-
 
 def visualize_imgs(model, inputs, labels, text_label_list, num_images):
     logits = model.call(inputs)
@@ -202,11 +192,16 @@ def main(my_labels_txt, num_epochs):
         my_model = BasicModel(num_classes)
     elif (sys.argv[1] == "RESNET"):
         my_model = ResnetModel(num_classes)
+
     # test_tensor = tf.zeros((10, 128, 128, 1))
     # logits = my_model.call(test_tensor)
 
-    visualize_imgs(my_model, test_inputs, test_labels, text_label_list, 10)
+    # visualize_imgs(my_model, test_inputs, test_labels, text_label_list, 10)
+    print("INITIAL TEST ACCURACY: ", test(my_model, test_inputs, test_labels))
 
+    if (sys.argv[1] == "BASIC"):
+        my_model.convLayers.summary()
+        my_model.denseLayers.summary()
 
     # train
     loss_list_all = []
@@ -218,6 +213,7 @@ def main(my_labels_txt, num_epochs):
     # loss_list_all = np.flatten(loss_list_all)
     #test
     print("TEST ACCURACY: ", test(my_model, test_inputs, test_labels))
+
     print("NUM CLASSES: ", num_classes, ";random accuracy is ", 1/num_classes)
 
     end = time.time()
@@ -229,6 +225,6 @@ def main(my_labels_txt, num_epochs):
 if __name__ == '__main__':
 
     num_epochs = 15
-    filepath = "./my_25_labels.txt"
+    filepath = "./my_10_labels.txt"
 
     main(filepath, num_epochs)
