@@ -14,6 +14,8 @@ For example, if you wanted to categorize snakes and hot air balloons the file wo
 snake
 hot-air_balloon
 
+N.B. if visualize_imgs() is called in assignment.py, the first n (i.e. 10) images of the test input will get saved as pngs (0.png, 1.png, etc.) for the viewer to see and qualitatively evaluate the model's performance. 
+
 ----------------- Description of overall architecture: -----------------
 We read in the desired inputs from the dataset based on the filepath provided
 in the arguments. From there, we preprocess the data to make it 128x128x1 and
@@ -42,4 +44,4 @@ the logits.
 
 ----------------- Making the dataset: -----------------
 This is not necessary to use for general use because this has already been done for the data we intend to use.
-However, if someone wanted to change our model to use a different dataset they could use these functions.
+However, if someone wanted to change our model to use a different dataset they could use these functions. In the main() function, fill in the sketch filepath to wherever the directory for the images you want are locally stored.

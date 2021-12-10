@@ -15,6 +15,14 @@ import PIL
 import time
 
 def get_batch(start_index, batch_size, train_inputs, train_labels):
+    """
+    Returns the inputs of a given batch size, flips half the inputs
+    :param start_index: beggining index to start the new batch 
+    :param batch_size: size of the batch i.e. 64
+    :param train_inputs: img data for training of shape (num_inputs, 128, 128, 1)
+    :param train_labels: labels for trianing of shape (num_inputs, num_classes)
+    :return tuple of inputs and batches
+    """   
     input_batch = train_inputs[start_index : (start_index + batch_size)]
     label_batch = train_labels[start_index : (start_index + batch_size)]
     flipped_in = tf.image.random_flip_left_right(input_batch) # include randomly flipping
@@ -22,9 +30,14 @@ def get_batch(start_index, batch_size, train_inputs, train_labels):
 
 
 def train(model, train_inputs, train_labels, num_examples): # from class CNN project
-    '''
-    Trains the model on all of the inputs and labels for one epoch.
-    '''
+    """
+    Trains the model on the test inputs and labels. Splits into batches returns loss. 
+
+    :param model: the initialized model to use for the forward pass and backward pass
+    :params test_inputs: image data inputs for testing
+    :params test_labels: labels for testing 
+    :return list of losses for each batch
+    """
     indices = tf.convert_to_tensor(np.arange(num_examples)) # make sure is tensor so gradients flow
     indices_shuffled = tf.random.shuffle(indices)
     shuffled_in = tf.gather(train_inputs, indices)
@@ -54,7 +67,12 @@ def train(model, train_inputs, train_labels, num_examples): # from class CNN pro
 # from class CNN project
 def test(model, test_inputs, test_labels):
     """
-    Tests the model on the test inputs and labels.
+    Tests the model on the test inputs and labels. Also print the top 3 accuracy
+
+    :param model: the initialized model to use for the forward pass and backward pass
+    :params test_inputs: image data inputs for testing
+    :params test_labels: labels for testing 
+    :return model accuracy as a decimal
     """
     logits = model.call(test_inputs)
     accuracy = model.accuracy(logits, test_labels)
@@ -69,9 +87,10 @@ def top_n_accuracy(logits, labels, top_n):
     an image that is a bear with top three labels [hot-air_balloon, hermit_crab, bear] would be correct if top_n=3
     and incorrect if top_n = 1.
 
-    logits: a matrix of shape (num_inputs, num_classes)
-    labels: labels of shape (num_inputs, num_classes)
-    top_n: If correct label is among top_n most probable labels, count as correct
+    :param logits: a matrix of shape (num_inputs, num_classes)
+    :param labels: labels of shape (num_inputs, num_classes)
+    :param top_n: If correct label is among top_n most probable labels, count as correct
+    :return accuracy for the top n predictions
     """
     if (logits.shape[1] < top_n):
         top_n = logits.shape[1]
@@ -97,11 +116,11 @@ def show_predictions(model, image, logits, label, text_label_list, filename):
     Shows more information on prediction for a single image. Prints out the top three most likely
     categories predicted by the model. Also saves the image as a file.
 
-    image: single image to get info about
-    logits: a matrix of shape (num_inputs, num_classes)
-    labels: labels of shape (num_inputs, num_classes)
-    text_label_list: labels in the form of their names (NOT one hot form)
-    filename: filename where the image will be saved
+    params image: single image to get info about
+    params logits: a matrix of shape (num_inputs, num_classes)
+    params labels: labels of shape (num_inputs, num_classes)
+    params text_label_list: labels in the form of their names (NOT one hot form)
+    params filename: filename where the image will be saved
 
     """
     image = np.squeeze(image, -1).astype(bool)
@@ -131,10 +150,10 @@ def visualize_imgs(model, inputs, labels, text_label_list, num_images):
     Runs the given inputs through the call function and then calls show_predictions
     on each. Does not actually show images, but does save them as files.
 
-    inputs: images to get prediction info about (of shape num_inputs, 128, 128, 1)
-    labels: labels of shape (num_inputs, num_classes)
-    text_label_list: labels in the form of their names (NOT one hot form)
-    num_images: int number of images you want prediction information about (example, the first 10, the first 5, etc.)
+    params inputs: images to get prediction info about (of shape num_inputs, 128, 128, 1)
+    params labels: labels of shape (num_inputs, num_classes)
+    params text_label_list: labels in the form of their names (NOT one hot form)
+    params num_images: int number of images you want prediction information about (example, the first 10, the first 5, etc.)
 
     """
     logits = model.call(inputs)
@@ -158,9 +177,9 @@ def main(num_epochs):
     (inputs, labels, text_label_list) = get_data("./data", my_labels_txt, flip=False)
     (train_inputs, train_labels, test_inputs, test_labels) = split_into_train_test(inputs, labels)
 
-    img = np.squeeze(train_inputs[0], -1).astype(bool)
-    new_im = PIL.Image.fromarray(img)
-    new_im.save("test01.png")
+    # img = np.squeeze(train_inputs[0], -1).astype(bool)
+    # new_im = PIL.Image.fromarray(img)
+    # new_im.save("test01.png")
 
     num_classes = train_labels.shape[1]
     num_images = train_labels.shape[0]

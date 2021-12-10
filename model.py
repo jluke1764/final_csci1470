@@ -6,7 +6,11 @@ from tensorflow.keras.layers import *
 
 
 class ResnetModel(tf.keras.Model):
-
+    """
+    This model class contains the architecture for your CNN that
+    classifies images. It contains 3 convolution layers and 2 dense layers.
+    Model architecture adapted from Lu and Tran, Stanford 2017.
+    """
 
     def __init__(self, num_classes):
         super(ResnetModel, self).__init__()
@@ -189,7 +193,7 @@ class ResnetModel(tf.keras.Model):
     def loss(self, logits, labels):
         """
         Calculates the model cross-entropy loss after one forward pass.
-        Softmax is applied in this function.
+        Softmax is applied in this function. Adapted from HW2.
         :param logits: a matrix of shape (num_inputs, self.num_classes)
         containing the result of multiple convolution and feed forward layers during training num_inputs is batch_size
         :param labels: matrix of shape (batch_size, self.num_classes) containing the labels
@@ -204,7 +208,7 @@ class ResnetModel(tf.keras.Model):
     def accuracy(self, logits, labels): # from the cnn assignment
         """
         Calculates the model's prediction accuracy by comparing
-        logits to correct labels – no need to modify this.
+        logits to correct labels.  Adapted from HW2.
         :param logits: a matrix of size (num_inputs, self.num_classes);
         containing the result of multiple convolution and feed forward layers during training num_inputs is batch_size
         :param labels: matrix of size (num_labels, self.num_classes) containing the answers
@@ -214,9 +218,4 @@ class ResnetModel(tf.keras.Model):
         return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
 
-def main():
-    return
 
-
-if __name__ == '__main__':
-    main()

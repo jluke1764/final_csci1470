@@ -3,17 +3,7 @@ import numpy as np
 import tensorflow as tf
 import os
 import PIL
-"""
-Here we will preprocess the data.
-Steps:
--- download the images
--- select particular categories from data to reduce data size (like hw2)
--- match data and labels, return them
 
-potential things to improve performance
--- may need to resize or recenter data (pending....)
--- may need to reduce resolution
-"""
 
 def unpickle(file):
 	"""
@@ -24,12 +14,13 @@ def unpickle(file):
 		dict = pickle.load(fo, encoding='bytes')
 	return dict
 
-	"""
-	Function to get all data. Not split into test and train in this function.
+def get_data(data_path, labels_path, flip=False):
+    """
+    Function to get all data. Not split into test and train in this function.
 
-	data_path:
-	labels_path:
-	flip: False
+	:param data_path: filepath to the data folder
+	:param labels_path: filepath to the txt file of labels that we want to classify in our model
+	:param flip: boolean to add flipped images to the dataset to double the amount of data
 
 	returns
 	inputs: inputs of shape (num_examples, 128, 128, 1)
@@ -37,7 +28,6 @@ def unpickle(file):
 	my_labels: NOT-one hot form of labels of shape (num_examples, num_classes)
 
 	"""
-def get_data(data_path, labels_path, flip=False):
 
     # get my labels
     with open(labels_path, "r") as f:
@@ -68,26 +58,29 @@ def get_data(data_path, labels_path, flip=False):
 
     # reshape image data
     # 128*128
-    inputs = np.array(inputs) # (1248, 128, 128)
+    inputs = np.array(inputs) 
     labels = np.array(labels)
 
     # one hot labels
     one_hot_labels = tf.one_hot(labels, num_classes)
     return (inputs, one_hot_labels, my_labels)
 
-"""
+
+def split_into_train_test(inputs, labels, frac=.8):
+    """
 	Splits input data and labels into train and test data based on a given ratio of test/train
 
-	inputs: inputs of shape (num_examples, 128, 128, 1)
-	labels: the labels corresponding to the inputs of shape (num_examples, num_classes)
-	frac: the ration of train to test you want. For example frac = 0.8 with 100 examples would give you
+	:param inputs: inputs of shape (num_examples, 128, 128, 1)
+	:param labels: the one hot labels corresponding to the inputs of shape (num_examples, num_classes)
+	:param frac: the ration of train to test you want. For example frac = 0.8 with 100 examples would give you
 	80 train and 20 test.
 
-	returns
-	train_inputs and train_labels of shape (num_examples*frac, 128, 128, 1)
-	test_inputs and test_labels of shape (num_examples*(1-frac), num_classes)
+	returns tuple
+	    train_inputs of shape (num_examples*frac, 128, 128, 1)
+        train_labels of shape (num_examples*frac, num_classes)
+	    test_inputs of shape (num_examples*(1-frac), 128, 128, 1)
+        test_labels  of shape (num_examples*(1-frac), num_classes)
 	"""
-def split_into_train_test(inputs, labels, frac=.8):
 
 
     num_examples = inputs.shape[0]
@@ -107,14 +100,11 @@ def split_into_train_test(inputs, labels, frac=.8):
     train_labels = labels_split[0]
     test_inputs = inputs_split[1]
     test_labels = labels_split[1]
-    #print("test input shape", test_inputs.shape)
-    #print("test labels shape", test_labels.shape)
 
-    new_im = PIL.Image.fromarray(train_inputs[0])
-    new_im.save("test0.png")
+    # new_im = PIL.Image.fromarray(train_inputs[0])
+    # new_im.save("test0.png")
 
-    train_inputs = np.expand_dims(train_inputs, -1).astype(float) #(1248, 128, 128, 1)
-    test_inputs = np.expand_dims(test_inputs, -1).astype(float) #(1248, 128, 128, 1)
-
+    train_inputs = np.expand_dims(train_inputs, -1).astype(float) 
+    test_inputs = np.expand_dims(test_inputs, -1).astype(float) 
 
     return (train_inputs, train_labels, test_inputs, test_labels)

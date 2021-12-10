@@ -4,12 +4,16 @@ import tensorflow as tf
 import os
 import PIL
 
-"""
-/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000
-sketches_filepath is where the images live in the computer
-data_filepath is where I want the generated txt filepath to live
-"""
+
 def get_labels(sketches_filepath, data_filepath, make_txt=False):
+"""
+Returns a list of all labels from the sketch directory. Also creates a txt file if desired.
+:param sketches_filepath: the path to the locally downloaded sketch directory
+:param data_filepath: the path to where we want to put the generated txt of all the labels
+:param make_txt: boolean for whether the txt should be generated
+:return: list of all labels
+"""
+
     labels = os.listdir(sketches_filepath)
     if (make_txt == True):
         file_name = "all_labels.txt"
@@ -25,7 +29,12 @@ def get_labels(sketches_filepath, data_filepath, make_txt=False):
     return labels
 
 def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
-
+"""
+Pickles the images for a select label into one file
+:param sketches_filepath: the path to the locally downloaded sketch directory
+:param data_filepath: the path to where we want to put the generated pickle file
+:param labels_list: list of all possible labels
+"""
     if (label in labels_list == False):
         print("bad label")
         return
@@ -33,8 +42,6 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
     images = os.listdir(sketches_filepath+"/"+label)
 
     img_bytes_list = []
-
-    # print(os.getcwd())
 
     f = open(data_filepath+label, "wb")
 
@@ -55,6 +62,11 @@ def imgs2bytes(sketches_filepath, label, data_filepath, labels_list):
     f.close()
 
 def make_select_pickles(sketches_filepath, my_labels_filename):
+"""
+Given a list of labels, generates pickle files from the sketch directory
+:param sketches_filepath: the path to the locally downloaded sketch directory
+:param my_labels_filename: the name of the txt that has the list of labels we want to create pickle files for
+"""
 
     my_labels_filepath = os.path.join(".", my_labels_filename)
 
@@ -76,13 +88,20 @@ def make_select_pickles(sketches_filepath, my_labels_filename):
         imgs2bytes(sketches_filepath, label, data_filepath, labels_list)
 
 
+def main():
+"""
+if the pickled data does not already exist locally on your computer, run this with the filepaths where the sketches are kept 
+on your machine. Examples commented below
+"""
+    # sketch_path = "/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000"
+    # labels_list = get_labels(sketch_path, "./")
+    # make_select_pickles(sketch_path, "all_labels.txt")
+    return
 
 
-    # print(images)
+if __name__ == '__main__':
+    main()
 
-# labels_list = get_labels("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "/Users/JackieLuke/cs1470/final_csci1470")
 
-# imgs2bytes("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "cow", "/Users/JackieLuke/cs1470/final_csci1470/data", labels_list)
 
-make_select_pickles("/Users/rachelfuller/Desktop/rendered_256x256/256x256/sketch/tx_000100000000", "my_10_labels.txt")
-# make_select_pickles("/Users/JackieLuke/cs1470/rendered_256x256/256x256/sketch/tx_000100000000", "my_2_labels.txt")
+

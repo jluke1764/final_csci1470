@@ -6,9 +6,8 @@ from tensorflow.keras.layers import Dense, Flatten, Reshape, Conv2D, MaxPool2D, 
 class BasicModel(tf.keras.Model):
     def __init__(self, num_classes):
         """
-        This model class will contain the architecture for your CNN that
-        classifies images. We have left in variables in the constructor
-        for you to fill out, but you are welcome to change them if you'd like.
+        This model class contains the architecture for your CNN that
+        classifies images. It contains 3 convolution layers and 2 dense layers.
         """
         super(BasicModel, self).__init__()
 
@@ -42,7 +41,7 @@ class BasicModel(tf.keras.Model):
 
     def call(self, inputs):
         """
-        Runs a forward pass on an input batch of images.
+        Runs a forward pass on an input batch of images. Adapted from CSCI1470 HW2.
 
         :param inputs: images, shape of (num_inputs, 128, 128, 1); during training num_inputs is batch_size
         :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, num_classes)
@@ -55,7 +54,7 @@ class BasicModel(tf.keras.Model):
     def loss(self, logits, labels):
         """
         Calculates the model cross-entropy loss after one forward pass.
-        Softmax is applied in this function.
+        Softmax is applied in this function. Adapted from CSCI1470 HW2.
 
         :param logits: a matrix of shape (num_inputs, self.num_classes)
         containing the result of multiple convolution and feed forward layers. during training num_inputs is batch_size
@@ -69,7 +68,7 @@ class BasicModel(tf.keras.Model):
     def accuracy(self, logits, labels):
         """
         Calculates the model's prediction accuracy by comparing
-        logits to correct labels – no need to modify this.
+        logits to correct labels. Adapted from CSCI1470 HW2.
 
         :param logits: a matrix of size (num_inputs, self.num_classes); during training, this will be (batch_size, self.num_classes)
         containing the result of multiple convolution and feed forward layers
