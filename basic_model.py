@@ -14,7 +14,6 @@ class BasicModel(tf.keras.Model):
 
         # hyperparameters
         self.batch_size = 64
-        self.num_inputs = self.batch_size
         self.num_classes = num_classes # depends on input
         self.loss_list = [] # Append losses to this list in training so you can visualize loss vs time in main
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
@@ -36,7 +35,7 @@ class BasicModel(tf.keras.Model):
 
         # dense layers
         self.denseLayers = Sequential()
-        self.denseLayers.add(Dense(64, activation='relu'))
+        self.denseLayers.add(Dense(32, activation='relu'))
         self.denseLayers.add(Dropout(rate=0.3))
         self.denseLayers.add(Dense(self.num_classes))
 

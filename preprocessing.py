@@ -32,6 +32,19 @@ def unpickle(file):
 		dict = pickle.load(fo, encoding='bytes')
 	return dict
 
+	"""
+	Function to get all data. Not split into test and train in this function.
+
+	data_path:
+	labels_path:
+	flip: False
+
+	returns
+	inputs: inputs of shape (num_examples, 128, 128, 1)
+	one_hot_labels: one hot form of labels of shape (num_examples, num_classes)
+	my_labels: NOT-one hot form of labels of shape (num_examples, num_classes)
+
+	"""
 def get_data(data_path, labels_path, flip=False):
 
     # get my labels
@@ -70,6 +83,18 @@ def get_data(data_path, labels_path, flip=False):
     one_hot_labels = tf.one_hot(labels, num_classes)
     return (inputs, one_hot_labels, my_labels)
 
+"""
+	Splits input data and labels into train and test data based on a given ratio of test/train
+
+	inputs: inputs of shape (num_examples, 128, 128, 1)
+	labels: the labels corresponding to the inputs of shape (num_examples, num_classes)
+	frac: the ration of train to test you want. For example frac = 0.8 with 100 examples would give you
+	80 train and 20 test.
+
+	returns
+	train_inputs and train_labels of shape (num_examples*frac, 128, 128, 1)
+	test_inputs and test_labels of shape (num_examples*(1-frac), num_classes)
+	"""
 def split_into_train_test(inputs, labels, frac=.8):
 
 
