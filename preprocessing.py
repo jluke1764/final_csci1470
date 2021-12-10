@@ -17,14 +17,6 @@ potential things to improve performance
 
 def unpickle(file):
 	"""
-	CIFAR data contains the files data_batch_1, data_batch_2, ...,
-	as well as test_batch. We have combined all train batches into one
-	batch for you. Each of these files is a Python "pickled"
-	object produced with cPickle. The code below will open up a
-	"pickled" object (each file) and return a dictionary.
-
-	NOTE: DO NOT EDIT
-
 	:param file: the file to unpickle
 	:return: dictionary of unpickled data
 	"""
